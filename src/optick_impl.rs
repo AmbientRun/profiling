@@ -1,5 +1,5 @@
 #[macro_export]
-macro_rules! scope {
+macro_rules! optick_scope {
     ($name:expr) => {
         $crate::optick::event!($name);
     };
@@ -11,7 +11,7 @@ macro_rules! scope {
 }
 
 #[macro_export]
-macro_rules! register_thread {
+macro_rules! optick_register_thread {
     () => {
         let thread_name = std::thread::current()
             .name()
@@ -28,7 +28,7 @@ macro_rules! register_thread {
 /// Finishes the frame. This isn't strictly necessary for some kinds of applications but a pretty
 /// normal thing to track in games.
 #[macro_export]
-macro_rules! finish_frame {
+macro_rules! optick_finish_frame {
     () => {
         $crate::optick::next_frame();
     };

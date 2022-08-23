@@ -1,5 +1,5 @@
 #[macro_export]
-macro_rules! scope {
+macro_rules! tracy_scope {
     // Note: literal patterns provided as an optimization since they can skip an allocation.
     ($name:literal) => {
         // Note: callstack_depth is 0 since this has significant overhead
@@ -40,7 +40,7 @@ macro_rules! scope {
 ///  - register_thread!() - Tries to get the name of the thread, or an ID if no name is set
 ///  - register_thread!(name: &str) - Registers the thread using the given name
 #[macro_export]
-macro_rules! register_thread {
+macro_rules! tracy_register_thread {
     () => {
         let thread_name = std::thread::current()
             .name()
@@ -59,7 +59,7 @@ macro_rules! register_thread {
 /// Finishes the frame. This isn't strictly necessary for some kinds of applications but a pretty
 /// normal thing to track in games.
 #[macro_export]
-macro_rules! finish_frame {
+macro_rules! tracy_finish_frame {
     () => {
         $crate::tracy_client::Client::running()
             .expect("finish_frame! without a running tracy_client::Client")

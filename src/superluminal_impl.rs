@@ -1,5 +1,5 @@
 #[macro_export]
-macro_rules! scope {
+macro_rules! superluminal_scope {
     ($name:expr) => {
         let _superluminal_guard = $crate::superluminal::SuperluminalGuard::new($name);
     };
@@ -10,7 +10,7 @@ macro_rules! scope {
 }
 
 #[macro_export]
-macro_rules! register_thread {
+macro_rules! superluminal_register_thread {
     () => {
         let thread_name = std::thread::current()
             .name()
@@ -25,7 +25,7 @@ macro_rules! register_thread {
 }
 
 #[macro_export]
-macro_rules! finish_frame {
+macro_rules! superluminal_finish_frame {
     () => {
         // superluminal does not have a frame end function
     };

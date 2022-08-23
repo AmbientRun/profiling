@@ -1,5 +1,5 @@
 #[macro_export]
-macro_rules! scope {
+macro_rules! tracing_scope {
     ($name:expr) => {
         let _span = $crate::tracing::span!($crate::tracing::Level::INFO, $name);
         let _span_entered = _span.enter();
@@ -11,12 +11,12 @@ macro_rules! scope {
 }
 
 #[macro_export]
-macro_rules! register_thread {
+macro_rules! tracing_register_thread {
     () => {};
     ($name:expr) => {};
 }
 
 #[macro_export]
-macro_rules! finish_frame {
+macro_rules! tracing_finish_frame {
     () => {};
 }

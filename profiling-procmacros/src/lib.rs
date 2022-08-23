@@ -12,7 +12,7 @@ pub fn function(
     let instrumented_function_name = function.sig.ident.to_string();
 
     let body = &function.block;
-    let new_body: syn::Block = impl_block(body, &instrumented_function_name);
+    let new_body = impl_block(body, &instrumented_function_name);
 
     function.block = Box::new(new_body);
 
@@ -22,91 +22,37 @@ pub fn function(
     .into()
 }
 
-#[cfg(not(any(
-    feature = "profile-with-puffin",
-    feature = "profile-with-optick",
-    feature = "profile-with-superluminal",
-    feature = "profile-with-tracing",
-    feature = "profile-with-tracy"
-)))]
-fn impl_block(
-    body: &syn::Block,
-    _instrumented_function_name: &str,
-) -> syn::Block {
-    parse_quote! {
-        {
-            #body
-        }
-    }
-}
-
-#[cfg(feature = "profile-with-puffin")]
-fn impl_block(
-    body: &syn::Block,
-    _instrumented_function_name: &str,
-) -> syn::Block {
-    parse_quote! {
-        {
-            profiling::puffin::profile_function!();
-
-            #body
-        }
-    }
-}
-
-#[cfg(feature = "profile-with-optick")]
-fn impl_block(
-    body: &syn::Block,
-    _instrumented_function_name: &str,
-) -> syn::Block {
-    parse_quote! {
-        {
-            profiling::optick::event!();
-
-            #body
-        }
-    }
-}
-
-#[cfg(feature = "profile-with-superluminal")]
 fn impl_block(
     body: &syn::Block,
     instrumented_function_name: &str,
 ) -> syn::Block {
+    let mut stream = proc_macro2::TokenStream::new();
+
+    #[cfg(feature = "profile-with-puffin")]
+    stream.extend(quote!{ profiling::puffin::profile_function!(); });
+
+    #[cfg(feature = "profile-with-optick")]
+    stream.extend(quote!{ profiling::optick::event!(); });
+
+    #[cfg(feature = "profile-with-superluminal")]
+    stream.extend(quote!{ 
+        let _superluminal_guard = profiling::superluminal::SuperluminalGuard::new(#instrumented_function_name);
+    });
+
+    #[cfg(feature = "profile-with-tracing")]
+    stream.extend(quote!{ 
+        let _tracing_span = profiling::tracing::info_span!(#instrumented_function_name);
+    });
+
+    #[cfg(feature = "profile-with-tracy")]
+    stream.extend(quote!{ 
+        let _tracy_span = profiling::tracy_client::span!(#instrumented_function_name, 0);
+    });
+
     parse_quote! {
         {
-            let _superluminal_guard = profiling::superluminal::SuperluminalGuard::new(#instrumented_function_name);
 
-            #body
-        }
-    }
-}
-
-#[cfg(feature = "profile-with-tracing")]
-fn impl_block(
-    body: &syn::Block,
-    instrumented_function_name: &str,
-) -> syn::Block {
-    parse_quote! {
-        {
-            let _fn_span = profiling::tracing::span!(profiling::tracing::Level::INFO, #instrumented_function_name);
-            let _fn_span_entered = _fn_span.enter();
-
-            #body
-        }
-    }
-}
-
-#[cfg(feature = "profile-with-tracy")]
-fn impl_block(
-    body: &syn::Block,
-    instrumented_function_name: &str,
-) -> syn::Block {
-    parse_quote! {
-        {
-            // Note: callstack_depth is 0 since this has significant overhead
-            let _tracy_span = profiling::tracy_client::span!(#instrumented_function_name, 0);
-
+            #stream
             #body
         }
     }

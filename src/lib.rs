@@ -21,15 +21,11 @@ pub use profiling_procmacros::function;
 pub use puffin;
 #[cfg(feature = "profile-with-puffin")]
 mod puffin_impl;
-#[cfg(feature = "profile-with-puffin")]
-pub use puffin_impl::*;
 
 #[cfg(feature = "profile-with-optick")]
 pub use optick;
 #[cfg(feature = "profile-with-optick")]
 mod optick_impl;
-#[cfg(feature = "profile-with-optick")]
-pub use optick_impl::*;
 
 #[cfg(feature = "profile-with-superluminal")]
 pub use superluminal_perf;
@@ -42,37 +38,68 @@ pub use superluminal_impl::*;
 pub use tracing;
 #[cfg(feature = "profile-with-tracing")]
 mod tracing_impl;
-#[cfg(feature = "profile-with-tracing")]
-pub use tracing_impl::*;
 
 #[cfg(feature = "profile-with-tracy")]
 pub use tracy_client;
 #[cfg(feature = "profile-with-tracy")]
 mod tracy_impl;
-#[cfg(feature = "profile-with-tracy")]
-pub use tracy_impl::*;
 
-#[cfg(feature = "type-check")]
-mod type_check_impl;
-#[cfg(feature = "type-check")]
-pub use type_check_impl::*;
+#[macro_export]
+macro_rules! scope {
+    ($($tt:expr),*) => {
+        #[cfg(feature = "profile-with-puffin")]
+        $crate::puffin_scope!($($tt),*);
 
-#[cfg(not(any(
-    feature = "profile-with-puffin",
-    feature = "profile-with-optick",
-    feature = "profile-with-superluminal",
-    feature = "profile-with-tracing",
-    feature = "profile-with-tracy",
-    feature = "type-check"
-)))]
-mod empty_impl;
+        #[cfg(feature = "profile-with-optick")]
+        $crate::optick_scope!($($tt),*);
 
-#[cfg(not(any(
-    feature = "profile-with-puffin",
-    feature = "profile-with-optick",
-    feature = "profile-with-superluminal",
-    feature = "profile-with-tracing",
-    feature = "profile-with-tracy",
-    feature = "type-check"
-)))]
-pub use empty_impl::*;
+        #[cfg(feature = "profile-with-superluminal")]
+        $crate::superluminal_scope!($($tt),*);
+
+        #[cfg(feature = "profile-with-tracing")]
+        $crate::tracing_scope!($($tt),*);
+
+        #[cfg(feature = "profile-with-tracy")]
+        $crate::tracy_scope!($($tt),*);
+    };
+}
+
+#[macro_export]
+macro_rules! register_thread {
+    ($tt:tt) => {
+        #[cfg(feature = "profile-with-puffin")]
+        $crate::puffin_register_thread!($tt);
+
+        #[cfg(feature = "profile-with-optick")]
+        $crate::optick_register_thread!($tt);
+
+        #[cfg(feature = "profile-with-superluminal")]
+        $crate::superluminal_register_thread!($tt);
+
+        #[cfg(feature = "profile-with-tracing")]
+        $crate::tracing_register_thread!($tt);
+
+        #[cfg(feature = "profile-with-tracy")]
+        $crate::tracy_register_thread!($tt);
+    };
+}
+
+#[macro_export]
+macro_rules! finish_frame {
+    () => {
+        #[cfg(feature = "profile-with-puffin")]
+        $crate::puffin_finish_frame!();
+
+        #[cfg(feature = "profile-with-optick")]
+        $crate::optick_finish_frame!();
+
+        #[cfg(feature = "profile-with-superluminal")]
+        $crate::superluminal_finish_frame!();
+
+        #[cfg(feature = "profile-with-tracing")]
+        $crate::tracing_finish_frame!();
+
+        #[cfg(feature = "profile-with-tracy")]
+        $crate::tracy_finish_frame!();
+    };
+}

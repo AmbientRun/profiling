@@ -1,4 +1,21 @@
 #[macro_export]
+#[cfg(not(feature = "profile-with-optick"))]
+macro_rules! optick_scope {
+    ($($_:tt)*) => {};
+}
+#[cfg(not(feature = "profile-with-optick"))]
+#[macro_export]
+macro_rules! optick_register_thread {
+    ($($_:tt)*) => {};
+}
+#[cfg(not(feature = "profile-with-optick"))]
+#[macro_export]
+macro_rules! optick_finish_frame {
+    ($($_:tt)*) => {};
+}
+
+#[macro_export]
+#[cfg(feature = "profile-with-optick")]
 macro_rules! optick_scope {
     ($name:expr) => {
         $crate::optick::event!($name);
@@ -11,6 +28,7 @@ macro_rules! optick_scope {
 }
 
 #[macro_export]
+#[cfg(feature = "profile-with-optick")]
 macro_rules! optick_register_thread {
     () => {
         let thread_name = std::thread::current()
@@ -28,6 +46,7 @@ macro_rules! optick_register_thread {
 /// Finishes the frame. This isn't strictly necessary for some kinds of applications but a pretty
 /// normal thing to track in games.
 #[macro_export]
+#[cfg(feature = "profile-with-optick")]
 macro_rules! optick_finish_frame {
     () => {
         $crate::optick::next_frame();

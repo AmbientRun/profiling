@@ -1,4 +1,21 @@
+#[cfg(not(feature = "profile-with-superluminal"))]
 #[macro_export]
+macro_rules! superluminal_scope {
+    ($($_:tt)*) => {};
+}
+#[cfg(not(feature = "profile-with-superluminal"))]
+#[macro_export]
+macro_rules! superluminal_register_thread {
+    ($($_:tt)*) => {};
+}
+#[cfg(not(feature = "profile-with-superluminal"))]
+#[macro_export]
+macro_rules! superluminal_finish_frame {
+    ($($_:tt)*) => {};
+}
+
+#[macro_export]
+#[cfg(feature = "profile-with-superluminal")]
 macro_rules! superluminal_scope {
     ($name:expr) => {
         let _superluminal_guard = $crate::superluminal::SuperluminalGuard::new($name);
@@ -10,6 +27,7 @@ macro_rules! superluminal_scope {
 }
 
 #[macro_export]
+#[cfg(feature = "profile-with-superluminal")]
 macro_rules! superluminal_register_thread {
     () => {
         let thread_name = std::thread::current()
@@ -25,6 +43,7 @@ macro_rules! superluminal_register_thread {
 }
 
 #[macro_export]
+#[cfg(feature = "profile-with-superluminal")]
 macro_rules! superluminal_finish_frame {
     () => {
         // superluminal does not have a frame end function
@@ -36,6 +55,7 @@ macro_rules! superluminal_finish_frame {
 // but are not intended for direct use.
 //
 #[doc(hidden)]
+#[cfg(feature = "profile-with-superluminal")]
 pub mod superluminal {
     pub struct SuperluminalGuard;
 

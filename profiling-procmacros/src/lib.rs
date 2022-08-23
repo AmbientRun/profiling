@@ -24,7 +24,7 @@ pub fn function(
 
 fn impl_block(
     body: &syn::Block,
-    instrumented_function_name: &str,
+    _instrumented_function_name: &str,
 ) -> syn::Block {
     let mut stream = proc_macro2::TokenStream::new();
 
@@ -36,17 +36,17 @@ fn impl_block(
 
     #[cfg(feature = "profile-with-superluminal")]
     stream.extend(quote!{ 
-        let _superluminal_guard = profiling::superluminal::SuperluminalGuard::new(#instrumented_function_name);
+        let _superluminal_guard = profiling::superluminal::SuperluminalGuard::new(#_instrumented_function_name);
     });
 
     #[cfg(feature = "profile-with-tracing")]
     stream.extend(quote!{ 
-        let _tracing_span = profiling::tracing::info_span!(#instrumented_function_name);
+        let _tracing_span = profiling::tracing::info_span!(#_instrumented_function_name);
     });
 
     #[cfg(feature = "profile-with-tracy")]
     stream.extend(quote!{ 
-        let _tracy_span = profiling::tracy_client::span!(#instrumented_function_name, 0);
+        let _tracy_span = profiling::tracy_client::span!(#_instrumented_function_name, 0);
     });
 
     parse_quote! {

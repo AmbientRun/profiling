@@ -1,3 +1,20 @@
+#[cfg(not(feature = "profile-with-tracy"))]
+#[macro_export]
+macro_rules! tracy_scope {
+    ($($_:tt)*) => {};
+}
+#[cfg(not(feature = "profile-with-tracy"))]
+#[macro_export]
+macro_rules! tracy_register_thread {
+    ($($_:tt)*) => {};
+}
+#[cfg(not(feature = "profile-with-tracy"))]
+#[macro_export]
+macro_rules! tracy_finish_frame {
+    ($($_:tt)*) => {};
+}
+
+#[cfg(feature = "profile-with-tracy")]
 #[macro_export]
 macro_rules! tracy_scope {
     // Note: literal patterns provided as an optimization since they can skip an allocation.
@@ -39,6 +56,7 @@ macro_rules! tracy_scope {
 /// Two variants:
 ///  - register_thread!() - Tries to get the name of the thread, or an ID if no name is set
 ///  - register_thread!(name: &str) - Registers the thread using the given name
+#[cfg(feature = "profile-with-tracy")]
 #[macro_export]
 macro_rules! tracy_register_thread {
     () => {
@@ -58,6 +76,7 @@ macro_rules! tracy_register_thread {
 
 /// Finishes the frame. This isn't strictly necessary for some kinds of applications but a pretty
 /// normal thing to track in games.
+#[cfg(feature = "profile-with-tracy")]
 #[macro_export]
 macro_rules! tracy_finish_frame {
     () => {

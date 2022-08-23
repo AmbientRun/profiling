@@ -1,3 +1,10 @@
+#[cfg(not(feature = "profile-with-tracing"))]
+#[macro_export]
+macro_rules! tracing_scope {
+    ($($_:tt)*) => {};
+}
+
+#[cfg(feature = "profile-with-tracing")]
 #[macro_export]
 macro_rules! tracing_scope {
     ($name:expr) => {

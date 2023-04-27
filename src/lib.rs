@@ -13,7 +13,7 @@
 /// This must be done as a proc macro because tracing requires a const string
 ///
 /// ```
-/// #[profiling::function]
+/// #[ambient_profiling::function]
 /// fn my_function() {
 ///
 /// }

@@ -1,13 +1,13 @@
 /// Opens a scope. Two variants:
-///  - profiling::scope!(name: &str) - Opens a scope with the given name
-///  - profiling::scope!(name: &str, data: &str) - Opens a scope with the given name and an extra
+///  - ambient_profiling::scope!(name: &str) - Opens a scope with the given name
+///  - ambient_profiling::scope!(name: &str, data: &str) - Opens a scope with the given name and an extra
 ///    datafield. Details of this depend on the API, but it should be a &str. If the extra data is
 ///    named, it will be named "tag". Some APIs support adding more data (for example, `optic::tag!`)
 ///
 /// ```
-/// profiling::scope!("outer");
+/// ambient_profiling::scope!("outer");
 /// for _ in 0..10 {
-///     profiling::scope!("inner", format!("iteration {}").as_str());
+///     ambient_profiling::scope!("inner", format!("iteration {}").as_str());
 /// }
 /// ```
 #[macro_export]

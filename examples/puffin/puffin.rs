@@ -7,7 +7,7 @@
 //     puffin::set_scopes_on(true);
 //
 //     loop {
-//         profiling::scope!("Scope Name Here!");
+//         ambient_profiling::scope!("Scope Name Here!");
 //
 //         // Draw the UI
 //         profiler_ui.window(ui);
@@ -25,7 +25,7 @@ mod renderer;
 use renderer::Renderer;
 
 fn update() {
-    profiling::scope!("update");
+    ambient_profiling::scope!("update");
     some_function();
     some_other_function(5);
 }
@@ -34,7 +34,7 @@ fn draw(
     imgui_manager: &ImguiManager,
     profiler_ui: &mut puffin_imgui::ProfilerUi,
 ) {
-    profiling::scope!("draw");
+    ambient_profiling::scope!("draw");
     //
     //Draw an inspect window for the example struct
     //
@@ -136,7 +136,7 @@ fn main() {
                     *control_flow = winit::event_loop::ControlFlow::Exit
                 }
 
-                profiling::finish_frame!();
+                ambient_profiling::finish_frame!();
             }
 
             //
@@ -156,20 +156,20 @@ fn burn_time(micros: u128) {
     }
 }
 
-// This `profiling::function` attribute is equivalent to profiling::scope!(function_name)
-#[profiling::function]
+// This `ambient_profiling::function` attribute is equivalent to ambient_profiling::scope!(function_name)
+#[ambient_profiling::function]
 fn some_function() {
     burn_time(10000);
 }
 
 fn some_other_function(iterations: usize) {
-    profiling::scope!("some_other_function");
+    ambient_profiling::scope!("some_other_function");
     burn_time(400);
 
     {
-        profiling::scope!("do iterations");
+        ambient_profiling::scope!("do iterations");
         for i in 0..iterations {
-            profiling::scope!(
+            ambient_profiling::scope!(
                 "some_inner_function_that_sleeps",
                 format!("other data {}", i).as_str()
             );
@@ -179,7 +179,7 @@ fn some_other_function(iterations: usize) {
     }
 }
 
-#[profiling::function]
+#[ambient_profiling::function]
 fn some_inner_function(_iteration_index: usize) {
     burn_time(200);
 }

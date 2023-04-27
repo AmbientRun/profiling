@@ -19,7 +19,7 @@
 /// }
 /// ```
 #[cfg(feature = "procmacros")]
-pub use profiling_procmacros::function;
+pub use ambient_profiling_procmacros::function;
 
 #[cfg(feature = "profile-with-puffin")]
 pub use puffin;

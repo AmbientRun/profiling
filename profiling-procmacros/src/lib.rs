@@ -47,7 +47,7 @@ fn impl_block(
 ) -> syn::Block {
     parse_quote! {
         {
-            profiling::puffin::profile_function!();
+            ambient_profiling::puffin::profile_function!();
 
             #body
         }
@@ -61,7 +61,7 @@ fn impl_block(
 ) -> syn::Block {
     parse_quote! {
         {
-            profiling::optick::event!();
+            ambient_profiling::optick::event!();
 
             #body
         }
@@ -75,7 +75,7 @@ fn impl_block(
 ) -> syn::Block {
     parse_quote! {
         {
-            let _superluminal_guard = profiling::superluminal::SuperluminalGuard::new(#instrumented_function_name);
+            let _superluminal_guard = ambient_profiling::superluminal::SuperluminalGuard::new(#instrumented_function_name);
 
             #body
         }
@@ -89,7 +89,7 @@ fn impl_block(
 ) -> syn::Block {
     parse_quote! {
         {
-            let _fn_span = profiling::tracing::span!(profiling::tracing::Level::INFO, #instrumented_function_name);
+            let _fn_span = ambient_profiling::tracing::span!(ambient_profiling::tracing::Level::INFO, #instrumented_function_name);
             let _fn_span_entered = _fn_span.enter();
 
             #body
@@ -105,7 +105,7 @@ fn impl_block(
     parse_quote! {
         {
             // Note: callstack_depth is 0 since this has significant overhead
-            let _tracy_span = profiling::tracy_client::span!(#instrumented_function_name, 0);
+            let _tracy_span = ambient_profiling::tracy_client::span!(#instrumented_function_name, 0);
 
             #body
         }

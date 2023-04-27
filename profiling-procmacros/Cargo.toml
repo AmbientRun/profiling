@@ -1,13 +1,13 @@
 [package]
-name = "profiling-procmacros"
-version = "1.0.8"
+name = "ambient_profiling_procmacros"
+version = "1.0.9"
 authors = ["Philip Degarmo <aclysma@gmail.com>"]
 edition = "2018"
 description = "This crate provides a very thin abstraction over other profiler crates."
 license = "MIT OR Apache-2.0"
 readme = "../README.md"
-repository = "https://github.com/aclysma/profiling"
-homepage = "https://github.com/aclysma/profiling"
+repository = "https://github.com/AmbientRun/profiling"
+homepage = "https://github.com/AmbientRun/profiling"
 keywords = ["performance", "profiling"]
 categories = ["development-tools::profiling"]
 

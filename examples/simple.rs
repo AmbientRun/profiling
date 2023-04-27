@@ -25,7 +25,7 @@ fn main() {
     tracy_client::Client::start();
 
     // Good to call this on any threads that are created to get clearer profiling results
-    profiling::register_thread!("Main Thread");
+    ambient_profiling::register_thread!("Main Thread");
 
     // Set up the tracy layer in the tracing crate. This is just an example using tracing. This is
     // not necessary if using tracy directly. (profile-with-tracy)
@@ -40,18 +40,18 @@ fn main() {
 
     // Turn on tracing for puffin (you would still need to render/save this somehow!)
     #[cfg(feature = "profile-with-puffin")]
-    profiling::puffin::set_scopes_on(true);
+    ambient_profiling::puffin::set_scopes_on(true);
 
     println!("Starting loop, profiler can now be attached");
 
     // Test that using this macro multiple times in the same scope level will compile.
     //
-    // optick backend currently won't work with multiple `profiling::scope!` in the same scope
+    // optick backend currently won't work with multiple `ambient_profiling::scope!` in the same scope
     #[cfg(not(any(feature = "profile-with-optick")))]
     {
-        profiling::scope!("Outer scope");
+        ambient_profiling::scope!("Outer scope");
         burn_time(5);
-        profiling::scope!("Inner scope");
+        ambient_profiling::scope!("Inner scope");
         burn_time(5);
     }
 
@@ -59,29 +59,29 @@ fn main() {
     //
     // Does not work with these two backends:
     #[cfg(not(any(feature = "profile-with-puffin", feature = "profile-with-tracing")))]
-    // optick backend currently won't work with multiple `profiling::scope!` in the same scope
+    // optick backend currently won't work with multiple `ambient_profiling::scope!` in the same scope
     #[cfg(not(any(feature = "profile-with-optick")))]
     {
         let scope_name = String::from("Some scope name");
-        profiling::scope!(&scope_name);
+        ambient_profiling::scope!(&scope_name);
         burn_time(5);
 
         let another_scope_name = String::from("Another scope name");
         let some_data = String::from("Some data");
-        profiling::scope!(&another_scope_name, &some_data);
+        ambient_profiling::scope!(&another_scope_name, &some_data);
         burn_time(5);
     }
 
     loop {
         // Generate some profiling info
-        profiling::scope!("Main Thread");
+        ambient_profiling::scope!("Main Thread");
         some_function();
         some_other_function(10);
 
         println!("frame complete");
 
         // Finish the frame.
-        profiling::finish_frame!();
+        ambient_profiling::finish_frame!();
     }
 }
 
@@ -94,27 +94,27 @@ fn burn_time(millis: u128) {
     }
 }
 
-// This `profiling::function` attribute is equivalent to profiling::scope!(function_name)
-#[profiling::function]
+// This `ambient_profiling::function` attribute is equivalent to ambient_profiling::scope!(function_name)
+#[ambient_profiling::function]
 fn some_function() {
     burn_time(5);
 }
 
 fn some_other_function(iterations: usize) {
-    profiling::scope!("some_other_function");
+    ambient_profiling::scope!("some_other_function");
     burn_time(5);
 
     {
-        profiling::scope!("do iterations");
+        ambient_profiling::scope!("do iterations");
         for i in 0..iterations {
-            profiling::scope!(
+            ambient_profiling::scope!(
                 "some_inner_function_that_sleeps",
                 format!("other data {}", i).as_str()
             );
 
             // Mixing general profiling API calls with profiler-specific API calls is allowed
             #[cfg(feature = "profile-with-optick")]
-            profiling::optick::tag!("extra_data", "MORE DATA");
+            ambient_profiling::optick::tag!("extra_data", "MORE DATA");
 
             some_inner_function(i);
             burn_time(1);
@@ -122,7 +122,7 @@ fn some_other_function(iterations: usize) {
     }
 }
 
-#[profiling::function]
+#[ambient_profiling::function]
 fn some_inner_function(_iteration_index: usize) {
     burn_time(10);
 }

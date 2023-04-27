@@ -1,4 +1,10 @@
-# profiling
+# ambient_profiling
+
+A very small fork of [profiling](https://github.com/aclysma/profiling) with updated dependency versions.
+
+Original README follows.
+
+---
 
 Provides a very thin abstraction over instrumented profiling crates like `puffin`, `optick`, `tracy`, and `superluminal-perf`.
 
